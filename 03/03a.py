@@ -10,6 +10,7 @@ with open("input.txt") as f:
                 count[i][0] += 1
             else:
                 count[i][1] += 1
+
 g = ""
 e = ""
 
