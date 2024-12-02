@@ -9,7 +9,7 @@ challenges.
 from pathlib import Path
 
 YEAR_DIR = "year"
-README_FILE_PATH = Path("readme.md")
+README_FILE_PATH = Path("README.md")
 
 
 def get_stars_data(year_dir: Path) -> list[tuple[str, int]]:
