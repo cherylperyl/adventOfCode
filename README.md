@@ -10,5 +10,10 @@
 <!-- Badges of stars: end -->
 ---
 
-# References
-- https://github.com/jromero132/advent-of-code
+## Description
+
+This repo contains my solutions to Advent of Code tasks.
+
+## References
+
+- repo resources are based of [jromero132's project](https://github.com/jromero132/advent-of-code)
