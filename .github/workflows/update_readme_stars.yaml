@@ -6,7 +6,7 @@ on:
       - ".github/workflows/update_readme_stars.yaml"
       - "vscode_tasks/update_readme_stars.py"
       - "year/**.py"
-      - "readme.md"
+      - "README.md"
 jobs:
   update-readme-stars:
     runs-on: ubuntu-latest
