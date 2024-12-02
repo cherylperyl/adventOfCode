@@ -1,1 +1,11 @@
 **/.DS_Store
+
+# Python venv and pycache
+.venv
+__pycache__
+
+# Advent of Code Owner Proof
+.ownerproof
+
+# Environment variables
+.env
