@@ -95,11 +95,11 @@ def update_readme_file(path: Path, stars_data: list[tuple[str, int]]):
     readme_text = readme_text[:badges_begin_pos] + badges_text + readme_text[badges_end_pos:]
 
     # Place table
-    TABLE_BEGIN_MARK = r"<!-- Table summary of years: begin -->"
-    TABLE_END_MARK = r"<!-- Table summary of years: end -->"
-    table_begin_pos = readme_text.index(TABLE_BEGIN_MARK) + len(TABLE_BEGIN_MARK) + 1
-    table_end_pos = readme_text.index(TABLE_END_MARK)
-    readme_text = readme_text[:table_begin_pos] + table_text + readme_text[table_end_pos:]
+    # TABLE_BEGIN_MARK = r"<!-- Table summary of years: begin -->"
+    # TABLE_END_MARK = r"<!-- Table summary of years: end -->"
+    # table_begin_pos = readme_text.index(TABLE_BEGIN_MARK) + len(TABLE_BEGIN_MARK) + 1
+    # table_end_pos = readme_text.index(TABLE_END_MARK)
+    # readme_text = readme_text[:table_begin_pos] + table_text + readme_text[table_end_pos:]
 
     print(f"Saving `{path}` file...")
     with open(path, "w", encoding="utf-8") as f:
