@@ -8,15 +8,43 @@ import copy
 
 
 def get_next_position(position, direction):
-    if direction == ">":
-        next_position = (position[0] + 1, position[1])
-    elif direction == "<":
-        next_position = (position[0] - 1, position[1])
-    elif direction == "v":
-        next_position = (position[0], position[1] + 1)
-    elif direction == "^":
-        next_position = (position[0], position[1] - 1)
-    return next_position
+    moves = {">": (1, 0), "<": (-1, 0), "v": (0, 1), "^": (0, -1)}
+    move_x, move_y = moves[direction]
+    return position[0] + move_x, position[1] + move_y
+
+
+def within_range(position, width, height):
+    return 0 <= position[0] < width and 0 <= position[1] < height
+
+
+def stimulation(lab_map, start_position, start_direction, height, width,
+                directions):
+    obstruction = "#"
+    curr_position, curr_direction = start_position, start_direction
+    next_position = curr_position
+
+    visted_states = set()
+    while within_range(curr_position, width, height):
+        # get next position
+        next_position = get_next_position(curr_position, curr_direction)
+
+        # if next position is an obstruction, change direction
+        while within_range(next_position, width, height) and \
+                lab_map[next_position[1]][next_position[0]] == obstruction:
+            direction_idx = directions.index(curr_direction)
+            curr_direction = directions[(direction_idx + 1) % 4]
+            next_position = get_next_position(curr_position, curr_direction)
+
+        # if next position is a visted state, a potential obstacle position has been found
+        if (curr_position, curr_direction) in visted_states:
+            return True
+
+        # else add the state to visited states
+        visted_states.add((curr_position, curr_direction))
+
+        # move to next position
+        curr_position = next_position
+    return False
 
 
 def main():
@@ -24,22 +52,20 @@ def main():
     for line in sys.stdin:
         lab_map.append([obj for obj in line.strip("\n")])
 
-    obstruction = "#"
+    # initialise values
     directions = [">", "v", "<", "^"]
     height, width = len(lab_map), len(lab_map[0])
-    curr_position, curr_direction = None, None
+    curr_position, curr_direction = next(
+        ((x, y), lab_map[y][x])
+        for y in range(height)
+        for x in range(width)
+        if lab_map[y][x] in directions
+    )
 
-    positions_wo_obstruction = []
-    for y in range(height):
-        for x in range(width):
-            # find starting position and direction
-            if (curr_direction is None) and (lab_map[y][x] in directions):
-                curr_position = (x, y)
-                curr_direction = lab_map[y][x]
-
-            # get positions without obstructions
-            if lab_map[y][x] == ".":
-                positions_wo_obstruction.append((x, y))
+    # get positions without obstructions
+    positions_wo_obstruction = [(x, y) for y in range(height)
+                                for x in range(width)
+                                if lab_map[y][x] == "."]
 
     new_obstruction_position_count = 0
     for (x, y) in positions_wo_obstruction:
@@ -48,29 +74,9 @@ def main():
         # add obstacle
         new_lab_map[y][x] = "#"
 
-        curr_position_temp = curr_position
-        curr_direction_temp = curr_direction
-        next_position = curr_position_temp
-        visted_states = set()
-        while next_position[0] >= 0 and next_position[0] < width and next_position[1] >= 0 and next_position[1] < height:
-            # get next position
-            next_position = get_next_position(curr_position_temp, curr_direction_temp)
-
-            # if next position is an obstruction, change direction
-            if next_position[0] >= 0 and next_position[0] < width and next_position[1] >= 0 and next_position[1] < height:
-                while new_lab_map[next_position[1]][next_position[0]] == obstruction:
-                    direction_idx = directions.index(curr_direction_temp)
-                    curr_direction_temp = directions[(direction_idx + 1) % 4]
-                    next_position = get_next_position(curr_position_temp, curr_direction_temp)
-
-            # if next position is a visted state, a potential obstacle position has been found
-            if (curr_position_temp, curr_direction_temp) in visted_states:
-                new_obstruction_position_count += 1
-                break
-            visted_states.add((curr_position_temp, curr_direction_temp))
-
-            # move to next position
-            curr_position_temp = next_position
+        if stimulation(new_lab_map, curr_position, curr_direction, height,
+                       width, directions):
+            new_obstruction_position_count += 1
 
     print(new_obstruction_position_count)
 
