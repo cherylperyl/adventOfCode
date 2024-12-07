@@ -1,6 +1,6 @@
 """
 Author: Cheryl Goh
-Puzzle: Advent of Code (year=2024 ; day=7 ; task=1)
+Puzzle: Advent of Code (year=2024 ; day=7 ; task=2)
 """
 
 import sys
@@ -24,7 +24,7 @@ def main():
         remaining_nums_list = remaining_nums.strip().split(' ')
         equations.append((int(test), [int(num) for num in remaining_nums_list]))
 
-    symbols = ['+', '*']
+    symbols = ['+', '*', '|']
     total = 0
     for test_val, remaining_nums in equations:
         remaining_nums_count = len(remaining_nums)
@@ -38,6 +38,8 @@ def main():
                     result *= num
                 elif symbol == '+':
                     result += num
+                elif symbol == '|':
+                    result = int(str(result) + str(num))
                 if result > test_val:
                     break
             if result == test_val:
