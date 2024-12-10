@@ -50,18 +50,25 @@ def main():
     for part_num in part_num_idxs:
         coors_to_check = []
         if len(part_num) == 1:
-            coors_to_check += get_coordinates_to_check(part_num[0], bounds, "only")
+            coors_to_check += get_coordinates_to_check(part_num[0], bounds,
+                                                       "only")
         elif len(part_num) == 2:
-            coors_to_check += get_coordinates_to_check(part_num[0], bounds, "left")
-            coors_to_check += get_coordinates_to_check(part_num[-1], bounds, "right")
+            coors_to_check += get_coordinates_to_check(part_num[0], bounds,
+                                                       "left")
+            coors_to_check += get_coordinates_to_check(part_num[-1], bounds,
+                                                       "right")
         elif len(part_num) == 3:
-            coors_to_check += get_coordinates_to_check(part_num[0], bounds, "left")
-            coors_to_check += get_coordinates_to_check(part_num[2], bounds, "right")
-            coors_to_check += get_coordinates_to_check(part_num[1], bounds=bounds)
+            coors_to_check += get_coordinates_to_check(part_num[0], bounds,
+                                                       "left")
+            coors_to_check += get_coordinates_to_check(part_num[2], bounds,
+                                                       "right")
+            coors_to_check += get_coordinates_to_check(part_num[1],
+                                                       bounds=bounds)
 
         object_found = False
         for row_idx, col_idx in coors_to_check:
-            if schematic[row_idx][col_idx] != "." and not schematic[row_idx][col_idx].isdigit():
+            if schematic[row_idx][col_idx] != "." and \
+                    not schematic[row_idx][col_idx].isdigit():
                 object_found = True
                 break
 
@@ -78,7 +85,8 @@ def main():
 
     ans = 0
     for gear_position in gear_positions:
-        coors_to_check = get_coordinates_to_check(gear_position, bounds, "only")
+        coors_to_check = get_coordinates_to_check(gear_position, bounds,
+                                                  "only")
 
         unique_part_nums = set()
         for coor in coors_to_check:
