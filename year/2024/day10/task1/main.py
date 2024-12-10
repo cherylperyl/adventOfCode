@@ -1,11 +1,31 @@
+"""
+Author: Cheryl Goh
+Puzzle: Advent of Code (year=2024 ; day=10 ; task=1)
+"""
+
+import sys
 from collections import deque
 
-topo_map = []
-trailheads = []
-with open("input.txt", "r") as file:
-    row_idx = 0
-    for line in file:
-        line_strip =  line.strip("\n")
+
+def get_neighbours(node, topo_map):
+    col_idx, row_idx = node[0], node[1]
+    height = topo_map[row_idx][col_idx]
+    neighbours = []
+    if height < 9:
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        for c_i, r_i in directions:
+            neighbour = (col_idx + c_i, row_idx + r_i)
+            if (0 <= neighbour[1] < len(topo_map)) and \
+                (0 <= neighbour[0] < len(topo_map[0])) and \
+                    topo_map[neighbour[1]][neighbour[0]] == (height + 1):
+                neighbours.append((col_idx + c_i, row_idx + r_i))
+    return neighbours
+
+
+def main():
+    topo_map, trailheads, row_idx = [], [], 0
+    for line in sys.stdin:
+        line_strip = line.strip("\n")
         row = []
         for col_idx in range(len(line_strip)):
             row.append(int(line_strip[col_idx]))
@@ -14,42 +34,25 @@ with open("input.txt", "r") as file:
         topo_map.append(row)
         row_idx += 1
 
-for line in topo_map:
-    print(line)
+    score_sum = 0
+    for trailhead in trailheads:
+        unique_peaks = set()
+        queue = deque([trailhead])
 
-def get_neighbours(node, topo_map):
-    print(node)
-    col_idx = node[0]
-    row_idx = node [1]
-    height = topo_map[row_idx][col_idx]
+        while queue:
+            node = queue.popleft()
 
-    neighbours = []
-    if height < 9:
-        directions = [(1,0), (-1,0), (0,1), (0,-1)]
-        for c_i, r_i in directions:
-            if (0 <= row_idx + r_i < len(topo_map)) and (0 <= col_idx + c_i < len(topo_map[0])):
-                if topo_map[row_idx + r_i][col_idx + c_i] == height + 1:
-                    neighbours.append((col_idx + c_i, row_idx + r_i))
+            if topo_map[node[1]][node[0]] == 9:
+                unique_peaks.add(node)
 
-    return neighbours
+            else:
+                for neighbour in get_neighbours(node, topo_map):
+                    queue.append(neighbour)
 
-score_sum = 0
-for trailhead in trailheads:
-    unique_peaks = set()
-    queue = deque([trailhead])
+        score_sum += len(unique_peaks)
 
-    while queue:
-        # print(trailheads)
-        node = queue.popleft()
+    print(score_sum)
 
-        # end of trail
-        if topo_map[node[1]][node[0]] == 9:
-            unique_peaks.add(node)
 
-        else:
-            for neighbour in get_neighbours(node, topo_map):
-                queue.append(neighbour)
-
-    score_sum += len(unique_peaks)
-
-print(score_sum)
+if __name__ == "__main__":
+    main()
