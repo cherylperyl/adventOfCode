@@ -8,7 +8,7 @@
 <!-- Badges of stars: begin -->
 [![AoC 2021](https://img.shields.io/badge/2021-⭐%206-gray?logo=adventofcode&labelColor=8a2be2)](https://adventofcode.com/2021)
 [![AoC 2023](https://img.shields.io/badge/2023-⭐%206-gray?logo=adventofcode&labelColor=8a2be2)](https://adventofcode.com/2023)
-[![AoC 2024](https://img.shields.io/badge/2024-⭐%2021-gray?logo=adventofcode&labelColor=8a2be2)](https://adventofcode.com/2024)
+[![AoC 2024](https://img.shields.io/badge/2024-⭐%2022-gray?logo=adventofcode&labelColor=8a2be2)](https://adventofcode.com/2024)
 <!-- Badges of stars: end -->
 ---
 
