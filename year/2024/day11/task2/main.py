@@ -1,97 +1,59 @@
-from collections import deque, defaultdict
+"""
+Author: Cheryl Goh
+Puzzle: Advent of Code (year=2024 ; day=11 ; task=2)
+"""
+
+import sys
 
 
-garden = []
-with open("input.txt", "r") as file:
-    for line in file:
-        line = line.strip("\n")
-        garden.append([ch for ch in line])
+def count_stones_after_blinks(stone, blinks, memo):
+    # Base case: no more blinks
+    if blinks == 0:
+        return 1
+
+    # Check if result is already computed
+    if (stone, blinks) in memo:
+        return memo[(stone, blinks)]
+
+    # Apply rules
+    if stone == 0:
+        result = count_stones_after_blinks(1, blinks - 1, memo)
+    elif len(str(stone)) % 2 == 0:
+        # Split the stone
+        digits = str(stone)
+        mid = len(digits) // 2
+        left = int(digits[:mid])
+        right = int(digits[mid:])
+        result = (count_stones_after_blinks(left, blinks - 1, memo) +
+                  count_stones_after_blinks(right, blinks - 1, memo))
+    else:
+        # Multiply by 2024
+        new_stone = stone * 2024
+        result = count_stones_after_blinks(new_stone, blinks - 1, memo)
+
+    # Store result in memo
+    memo[(stone, blinks)] = result
+    return result
 
 
-height, width = len(garden), len(garden[0])
-visited = set()
-plant_regions = []
-directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-for r in range(height):
-    for c in range(width):
-        if (r, c) not in visited:
-            plant_type = garden[r][c]
-            region = []
-            plots_to_check = deque([(r, c)])
-            visited.add((r, c))
-            while plots_to_check:
-                curr_plot = plots_to_check.popleft()
-                region.append(curr_plot)
-                for step_r, step_c in directions:
-                    new_r, new_c = curr_plot[0] + step_r, curr_plot[1] + step_c
-                    new_plot = (new_r, new_c)
-                    if new_plot not in visited:
-                        if 0 <= new_r < height and 0 <= new_c < width:
-                            if garden[new_r][new_c] == plant_type:
-                                plots_to_check.append(new_plot)
-                                visited.add(new_plot)
-            plant_regions.append((plant_type, region))
+def total_stones_after_blinks(initial_stones, blinks):
+    memo = {}
+    total_stones = 0
+    for stone in initial_stones:
+        total_stones += count_stones_after_blinks(stone, blinks, memo)
+    return total_stones
 
-print(plant_regions)
 
-total_cost = 0
-for plant, region in plant_regions:
-    area = len(region)
+def main():
+    sys.set_int_max_str_digits(10000)
 
-    min_r, min_c, max_r, max_c = region[0][0], region[0][1], region[0][0], region[0][1]
-    for r, c in region:
-        min_r, max_r = min(r, min_r), max(r, max_r)
-        min_c, max_c = min(c, min_c), max(c, max_c)
+    for line in sys.stdin:
+        initial_stones = line.strip("\n").split(" ")
 
-    region_height, region_width = max_r - min_r + 1, max_c - min_c + 1
-    fence_plots = [[0 for _ in range(region_width + 2)] for _ in range(region_height + 2)]
-    for r, c in region:
-        for step_r, step_c in directions:
-            new_r, new_c = r + step_r, c + step_c
-            if new_r < 0 or new_r >= height or new_c < 0 or new_c >= width:
-                print(new_r, new_c)
-                fence_plots[new_r + 1 - min_r][new_c + 1 - min_c] += 1
-            elif garden[new_r][new_c] != plant:
-                print(new_r, new_c)
-                fence_plots[new_r + 1 - min_r][new_c + 1 - min_c] += 1
-    for row in fence_plots:
-        print(row)
+    exact_number_of_stones = total_stones_after_blinks(initial_stones, 75)
+    print(exact_number_of_stones)
+    sys.set_int_max_str_digits(4300)
 
-    # count perimeters
-    perimeter = 0
-    fence_height, fence_width = len(fence_plots), len(fence_plots[0])
-    for r in range(fence_height):
-        for c in range(fence_width):
-            directions = defaultdict(int)
-            while fence_plots[r][c] > 0:
 
-                found_step_r, found_step_c = None, None
-                for step_r, step_c in directions:
-                    # find direction to go into
-                    if 0 <= r + step_r < fence_height and 0 <= c + step_c < fence_width and fence_plots[r + step_r][c + step_c] > 0:
-                        found_step_r, found_step_c = step_r, step_c
-                        break
-
-                # go in that direction if direction found
-                if found_step_r is not None and found_step_c is not None and directions[(found_step_r, found_step_c)] < 2:
-                    directions[(found_step_r, found_step_c)] += 1
-                    fence_plots[r][c] -= 1
-                    factor = 1
-                    new_r, new_c = r + found_step_r*factor, c + found_step_c*factor
-                    while 0 <= new_r < fence_height and 0 <= new_c < fence_width:
-                        if fence_plots[new_r][new_c] == 0:
-                            break
-                        fence_plots[new_r][new_c] -= 1
-                        factor += 1
-                        new_r, new_c = r + found_step_r*factor, c + found_step_c*factor
-                    perimeter += 1
-
-                elif fence_plots[r][c] > 0:
-                    perimeter += fence_plots[r][c]
-                    fence_plots[r][c] = 0
-
-    print(perimeter)
-
-    total_cost += area * perimeter
-
-print(total_cost)
+if __name__ == "__main__":
+    main()
